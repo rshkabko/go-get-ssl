@@ -50,4 +50,30 @@ class Tools
             'domain' => $domain
         ]);
     }
+
+
+    /**
+     * Generate CSR to domain
+     *
+     * @param $domain Domain name
+     * @param $email
+     * @param $country
+     * @param $state
+     * @param $city
+     * @param string $organization The name of organization
+     * @param string $department IT is defaults
+     * @return string | null
+     */
+    public function generateCSR($domain, $email, $country, $state, $city, $organization = "None", $department = 'IT')
+    {
+        return $this->api->post("/tools/csr/generate/", [
+            'csr_commonname'    => $domain,
+            'csr_email'         => $email,
+            'csr_country'       => $country,
+            'csr_state'         => $state,
+            'csr_city'          => $city,
+            'csr_organization'  => $organization,
+            'csr_department'    => $department,
+        ]);
+    }
 }
