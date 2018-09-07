@@ -1,9 +1,13 @@
 {
-  "name": "alzo02/go-get-ssl",
+  "name": "rshkabko/go-get-ssl",
   "authors": [
     {
       "name": "Alzo02",
       "email": "alzo02@icloud.com"
+    },
+    {
+      "name": "Roman Shkabko",
+      "email": "r.shkabko@flamix.email"
     }
   ],
   "require": {
