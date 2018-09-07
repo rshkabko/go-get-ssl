@@ -102,6 +102,85 @@ class Order
     }
 
     /**
+     * Quick and simple Order
+     *
+     * TODO Input variables change to array
+     *
+     * @param string $prod_name - Product name
+     * @param string $domain
+     * @param string $email
+     * @param string $first_name
+     * @param string $second_name
+     * @param string $phone
+     * @param string $country
+     * @param string $state
+     * @param string $city
+     * @param string $organization
+     * @param int $period
+     * @param string $method
+     * @return array
+     * @throws \Exception
+     */
+    public function addSSLSimpleOrder( string $prod_name, string $domain, string $email, string $first_name, string $second_name, string $phone, string $country, string $state, string $city, $organization = "None", int $period = 12, string $method = 'http' )
+    {
+        $data = $result = array();
+        $prod = new \GoGetSSL\Product($this->api);
+        $id = $prod->getIdFromName($prod_name);
+        if(!$id)
+            throw new \Exception('Can\'t find product with name ' . $prod_name);
+
+        $tools = new \GoGetSSL\Tools($this->api);
+
+        $codes = $tools->generateCSR( $domain, $email, $country, $state, $city);
+
+        if(!$codes->csr_code)
+            throw new \Exception('Can\'t generate CSR to ' . $prod_name);
+
+        $data = array(
+            'product_id'       => $id,
+            'csr'              => $codes->csr_code,
+            'server_count'     => "-1",
+            'period'           => $period,
+            'approver_email'   => $email,
+            'webserver_type'   => "1",
+            'admin_firstname'  => $first_name,
+            'admin_lastname'   => $second_name,
+            'admin_phone'      => $phone,
+            'admin_title'      => "Mr",
+            'admin_email'      => $email,
+            'admin_organization'=>$organization,
+            'admin_city'       => $city,
+            'admin_country'    => $country,
+            'tech_firstname'   => $first_name,
+            'tech_lastname'    => $second_name,
+            'tech_phone'       => $phone,
+            'tech_title'       => "Mr",
+            'tech_email'       => $email,
+            'tech_organization'=> $organization,
+            'tech_city'        => $city,
+            'org_name'         => $organization,
+            'org_division'     => "IT",
+            'org_city'         => $city,
+            'org_country'      => $country,
+            'org_addressline1' => $country . ', ' . $city . ', ' . $organization,
+            'org_postalcode'   => '0000',
+            'org_phone'        => $phone,
+            'org_region'       => $state,
+            'dcv_method'       => $method,
+            //'only_validate'    => true   // <-- Remove to place a real order
+        );
+
+        $request = self::addSSLOrder($data);
+        if($request->error)
+            throw new \Exception( $request->description );
+
+        if(!$request->order_id)
+            throw new \Exception( 'Error in order!' );
+
+        return array_merge( (array) $request, (array) $codes );
+    }
+
+    /**
      * AddSSLRenewOrder allows a Partner to do everything a requestor would typically do using our web forms
      * for placing an renew order via one API operation call.
      *

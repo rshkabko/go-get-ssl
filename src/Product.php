@@ -35,6 +35,27 @@ class Product
     }
 
     /**
+     * Gets product ID from Name
+     *
+     * @param string $name
+     * @return bool|int
+     * @throws \Exception
+     */
+    public function getIdFromName(string $name )
+    {
+        if(!$name)
+            throw new \Exception('No name!');
+
+        $products = self::getAll();
+        if( !empty( $products->products ))
+            foreach ( $products->products as $product )
+                if( $product->name == $name )
+                    return (int) $product->id;
+
+        return false;
+    }
+
+    /**
      * Get details about product
      *
      * @param $id
